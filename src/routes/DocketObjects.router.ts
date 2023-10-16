@@ -2,9 +2,9 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
-import Game from "../models/game";
+import DocketObject from "../models/DocketObject";
 // Global Config
-export const gamesRouter = express.Router();
+export const docketRouter = express.Router();
 
 function apiKeyAuthMiddleware(request : Request, response : Response, next : NextFunction) {
     const apiKey = request.headers['api-key'] as string;
@@ -19,40 +19,40 @@ function isValidApiKey(apiKey : string) : boolean {
     return apiKey === process.env.API_KEY;
 }
 
-gamesRouter.use(apiKeyAuthMiddleware);
+docketRouter.use(apiKeyAuthMiddleware);
 
-gamesRouter.use(express.json());
+docketRouter.use(express.json());
 // GET
-gamesRouter.get("/", async (_req: Request, res: Response) => {
+docketRouter.get("/", async (_req: Request, res: Response) => {
     try {
-       const games = (await collections.games.find({}).toArray());
+       const docketObjects = (await collections.docketObjects.find({}).toArray());
 
-        res.status(200).send(games);
+        res.status(200).send(docketObjects);
     } catch (error) {
         res.status(500).send(error.message);
     }
 });
 
-gamesRouter.get("/:id", async (req: Request, res: Response) => {
+docketRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
         
         const query = { _id: new ObjectId(id) };
-        const game = (await collections.games.findOne(query));
+        const docketObject = (await collections.docketObjects.findOne(query));
 
-        if (game) {
-            res.status(200).send(game);
+        if (docketObject) {
+            res.status(200).send(docketObject);
         }
     } catch (error) {
         res.status(404).send(`Unable to find matching document with id: ${req.params.id}`);
     }
 });
 // POST
-gamesRouter.post("/", async (req: Request, res: Response) => {
+docketRouter.post("/", async (req: Request, res: Response) => {
     try {
-        const newGame = req.body as Game;
-        const result = await collections.games.insertOne(newGame);
+        const newGame = req.body as DocketObject;
+        const result = await collections.docketObjects.insertOne(newGame);
 
         result
             ? res.status(201).send(`Successfully created a new game with id ${result.insertedId}`)
@@ -63,14 +63,14 @@ gamesRouter.post("/", async (req: Request, res: Response) => {
     }
 });
 // PUT
-gamesRouter.put("/:id", async (req: Request, res: Response) => {
+docketRouter.put("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
-        const updatedGame: Game = req.body as Game;
+        const updatedDocketObject: DocketObject = req.body as DocketObject;
         const query = { _id: new ObjectId(id) };
       
-        const result = await collections.games.updateOne(query, { $set: updatedGame });
+        const result = await collections.docketObjects.updateOne(query, { $set: updatedDocketObject });
 
         result
             ? res.status(200).send(`Successfully updated game with id ${id}`)
@@ -81,12 +81,12 @@ gamesRouter.put("/:id", async (req: Request, res: Response) => {
     }
 });
 // DELETE
-gamesRouter.delete("/:id", async (req: Request, res: Response) => {
+docketRouter.delete("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
     try {
         const query = { _id: new ObjectId(id) };
-        const result = await collections.games.deleteOne(query);
+        const result = await collections.docketObjects.deleteOne(query);
 
         if (result && result.deletedCount) {
             res.status(202).send(`Successfully removed game with id ${id}`);
@@ -102,9 +102,9 @@ gamesRouter.delete("/:id", async (req: Request, res: Response) => {
 });
 
 // DELETE All Games
-gamesRouter.delete("/", async (_req: Request, res: Response) => {
+docketRouter.delete("/", async (_req: Request, res: Response) => {
     try {
-        const result = await collections.games.deleteMany({});
+        const result = await collections.docketObjects.deleteMany({});
 
         if (result && result.deletedCount) {
             res.status(202).send(`Successfully removed all games`);
