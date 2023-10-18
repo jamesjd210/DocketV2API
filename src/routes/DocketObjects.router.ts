@@ -55,7 +55,7 @@ docketRouter.post("/", async (req: Request, res: Response) => {
         const result = await collections.docketObjects.insertOne(newDocketObject);
 
         result
-            ? res.status(201).send(`Successfully created a new game with id ${result.insertedId} \n  ${JSON.stringify(newDocketObject)}`)
+            ? res.status(201).send(`Successfully created a new game with id ${result.insertedId}`)
             : res.status(500).send("Failed to create a new game.");
     } catch (error) {
         console.error(error);
