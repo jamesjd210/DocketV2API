@@ -22,8 +22,27 @@ function isValidApiKey(apiKey : string) : boolean {
 docketRouter.use(apiKeyAuthMiddleware);
 
 docketRouter.use(express.json());
-// GET
-docketRouter.get("/", async (_req: Request, res: Response) => {
+
+//GET by companyName 
+docketRouter.get("/", async (req: Request, res: Response) => {
+    //Check that the requests contains "company-name" field as a header
+    const companyName = req.headers['company-name'] as string;
+    //console.log(companyName);
+    if (!companyName) {
+        return res.status(400).json( {error : "Missing company-name header"});
+    }
+
+    const query = {companyName : companyName};
+    try {
+        const docketObjects = await collections.docketObjects.find(query).toArray();
+        res.status(200).send(docketObjects);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+// GET all
+docketRouter.get("/all", async (_req: Request, res: Response) => {
     try {
        const docketObjects = (await collections.docketObjects.find({}).toArray());
 
@@ -33,6 +52,8 @@ docketRouter.get("/", async (_req: Request, res: Response) => {
     }
 });
 
+
+//GET by ID
 docketRouter.get("/:id", async (req: Request, res: Response) => {
     const id = req?.params?.id;
 
