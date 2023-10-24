@@ -4,7 +4,7 @@ import { docketRouter } from "./routes/DocketObjects.router";
 import cors from 'cors';
 const app = express();
 const port = process.env.PORT || 8081; // default port to listen
-const allowedOrigins = ["https://www.docket.dev", "https://docketv1.streamlit.app", "http://localhost:3000"]
+const allowedOrigins = ["http://localhost:3000", process.env.ALLOWED_ORIGINS]
 
 const corsOptions = {
   origin : allowedOrigins,
