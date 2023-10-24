@@ -27,7 +27,6 @@ docketRouter.use(express.json());
 docketRouter.get("/", async (req: Request, res: Response) => {
     //Check that the requests contains "company-name" field as a header
     const companyName = req.headers['company-name'] as string;
-    //console.log(companyName);
     if (!companyName) {
         return res.status(400).json( {error : "Missing company-name header"});
     }
