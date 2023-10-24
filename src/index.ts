@@ -1,11 +1,13 @@
 import express from "express";
 import { connectToDatabase } from "./services/database.service"
 import { docketRouter } from "./routes/DocketObjects.router";
+import * as dotenv from "dotenv";
 import cors from 'cors';
 const app = express();
 const port = process.env.PORT || 8081; // default port to listen
-const allowedOrigins = ["http://localhost:3000", process.env.ALLOWED_ORIGINS]
-
+dotenv.config();
+const allowedOrigins = ["http://localhost:3000", process.env.ALLOWED_ORIGINS];
+console.log(allowedOrigins)
 const corsOptions = {
   origin : allowedOrigins,
 };
